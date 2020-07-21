@@ -16,7 +16,7 @@
 /** @type {typeof import('@adonisjs/framework/src/Route/Manager')} */
 const Route = use('Route')
 
-Route.post('/register', 'AuthController.create')
+Route.post('/register', 'AuthController.store')
 Route.post('/login', 'AuthController.authenticate')
 
 Route.get('/app', "AppController.index").middleware(["auth"]);
