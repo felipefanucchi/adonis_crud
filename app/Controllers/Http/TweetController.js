@@ -1,4 +1,4 @@
-'use strict'
+"use strict";
 
 const Tweet = use("App/Models/Tweet");
 
@@ -14,8 +14,12 @@ class TweetController {
    * Show a list of all tweets.
    * GET tweets
    */
-  async index () {
-    const tweets = await Tweet.all();
+  async index() {
+    const tweets = await Tweet.query()
+      .with("user", builder => {
+        builder.select(["id", "username"])
+      })
+      .fetch();
 
     return tweets;
   }
@@ -28,8 +32,8 @@ class TweetController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async store ({ request, auth }) {
-    const data = request.only(['content']);
+  async store({ request, auth }) {
+    const data = request.only(["content"]);
     const tweet = await Tweet.create({ user_id: auth.user.id, ...data });
 
     return tweet;
@@ -44,7 +48,7 @@ class TweetController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async show ({ params }) {
+  async show({ params }) {
     const tweet = await Tweet.findOrFail(params.id);
 
     return tweet;
@@ -58,7 +62,7 @@ class TweetController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy ({ params, auth, response }) {
+  async destroy({ params, auth, response }) {
     const tweet = await Tweet.findOrFail(params.id);
 
     if (tweet.user_id !== auth.user.id) {
@@ -69,4 +73,4 @@ class TweetController {
   }
 }
 
-module.exports = TweetController
+module.exports = TweetController;
