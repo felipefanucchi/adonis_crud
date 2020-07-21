@@ -30,7 +30,7 @@ class TweetController {
    */
   async store ({ request, auth }) {
     const data = request.only(['content']);
-    const tweet = await Tweet.create({ user_id: auth.user_id, ...data });
+    const tweet = await Tweet.create({ user_id: auth.user.id, ...data });
 
     return tweet;
   }
@@ -59,11 +59,11 @@ class TweetController {
    * @param {Response} ctx.response
    */
   async destroy ({ params, auth, response }) {
-    if (tweet.user_id !== auth.user_id) {
+    const tweet = await Tweet.findOrFail(params.id);
+
+    if (tweet.user_id !== auth.user.id) {
       return response.status(401);
     }
-
-    const tweet = await Tweet.findOrFail(params.id);
 
     await tweet.delete();
   }
